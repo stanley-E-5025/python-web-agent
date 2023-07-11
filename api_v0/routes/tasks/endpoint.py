@@ -6,6 +6,8 @@ from utils.scraping import delete_directory, detect_encoding
 import json
 from uuid import UUID
 from config import POC_STEPS
+import io
+
 
 import os
 import pandas as pd
@@ -18,12 +20,24 @@ router = APIRouter(tags=["task"], prefix="/task")
 def create_new_task(task: Task):
     return create_task(task)
 
+
 @router.get("/{id}", response_model=Task)
 def get_task(id:UUID):
     task = read_task(id)
     if task is None:
         raise HTTPException(status_code=404, detail="Task not found")
+
+    if task.file:
+        csv_base64_bytes = task.file.encode()
+        csv_data_bytes = base64.b64decode(csv_base64_bytes)
+        csv_data_str = csv_data_bytes.decode()
+        data = io.StringIO(csv_data_str)
+        df = pd.read_csv(data)
+
+        print(df)  # or return, or process as needed
+
     return task
+
 
 @router.get("/", response_model=list[Task])
 def get_all_tasks():
@@ -43,7 +57,7 @@ def delete_existing_task(id:UUID):
     return deleted_task
 
 
-@router.post("/execute/{id}")
+@router.post("/execute/{id}", response_model=Task)
 async def execute_task(id:UUID):
     task = read_task(id)
     if task is None:
@@ -72,4 +86,4 @@ async def execute_task(id:UUID):
         update_task(id, task)
         delete_directory(download_dir)
 
-    return results
+    return task
