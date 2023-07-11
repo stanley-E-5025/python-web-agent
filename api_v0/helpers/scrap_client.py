@@ -176,9 +176,4 @@ class ScraperClient:
 
         driver.quit()
 
-        return {
-            "bot_detected": self.bot_detected,
-            "download_dir": self.download_dir,
-            "data": self.data,
-            "case": self.case,
-        }
+        return self.download_dir

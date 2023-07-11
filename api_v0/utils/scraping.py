@@ -6,6 +6,8 @@ from pandas.core.frame import DataFrame
 import chardet
 import pandas as pd
 from faker import Faker
+import shutil
+
 
 
 fake = Faker()
@@ -141,3 +143,10 @@ def generate_user_agent():
 
     user_agent = f"Mozilla/5.0 ({platform}; Intel Mac OS X {os_version}) AppleWebKit/{browser_version} (KHTML, {name}) Chrome/{chrome_version} Safari/{browser_version}"
     return user_agent
+
+
+def delete_directory(path):
+    try:
+        shutil.rmtree(path)
+    except Exception as e:
+        print(f'Error while deleting directory {path}. Error: {str(e)}')
