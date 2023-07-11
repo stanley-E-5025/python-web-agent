@@ -25,3 +25,8 @@ black==22.10.0
 isort==5.10.1
 pytest==7.2.1
 greenlet
+selenium
+selenium_stealth
+bs4
+chardet
+faker
