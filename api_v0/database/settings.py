@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, create_engine
-from .models import User  # import your models here
+from .models import Task
 
 DATABASE_URL = "sqlite:///./database.sqlite3"
 engine = create_engine(DATABASE_URL)

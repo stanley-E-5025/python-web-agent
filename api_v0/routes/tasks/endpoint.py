@@ -1,42 +1,30 @@
-from fastapi import APIRouter, UploadFile, File, Form
-from database.operations import create_user
-from database.models import User
+from fastapi import APIRouter, HTTPException
+from database.operations import create_task, read_task, update_task, delete_task
+from database.models import Task
 
 router = APIRouter(tags=["task"], prefix="/task")
 
+@router.post("/", response_model=Task)
+def create_new_task(task: Task):
+    return create_task(task)
 
+@router.get("/{id}", response_model=Task)
+def get_task(id: int):
+    task = read_task(id)
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return task
 
-@router.post("/users/", response_model=User)
-def create_new_user(user: User):
-    return create_user(user)
+@router.put("/{id}", response_model=Task)
+def update_existing_task(id: int, task: Task):
+    updated_task = update_task(id, task)
+    if updated_task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return updated_task
 
-
-@router.get("/get_tasks")
-async def get_tasks():
-    return {"message": "Hello World"}
-
-
-@router.post("/create_task")
-async def create_task():
-    return {"message": "Hello World"}
-
-
-@router.get("/get_task/{task_id}")
-async def get_task(
-    task_id: int,
-):
-    return {"message": "Hello World"}
-
-
-@router.put("/update_task/{task_id}")
-async def update_task(
-    task_id: int,
-):
-    return {"message": "Hello World"}
-
-
-@router.delete("/delete_task/{task_id}")
-async def delete_task(
-    task_id: int,
-):
-    return {"message": "Hello World"}
+@router.delete("/{id}", response_model=Task)
+def delete_existing_task(id: int):
+    deleted_task = delete_task(id)
+    if deleted_task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return deleted_task
