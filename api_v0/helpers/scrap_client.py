@@ -18,7 +18,7 @@ from datetime import datetime
 from selenium_stealth import stealth
 from selenium.webdriver.common.keys import Keys
 
-from scraper_app.utils import generate_user_agent
+from utils.scraping import generate_user_agent
 
 tenant_directory, root_dir = (
     Path(__file__).resolve().parent.parent,

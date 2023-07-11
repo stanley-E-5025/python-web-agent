@@ -1,5 +1,14 @@
 from fastapi import APIRouter, UploadFile, File, Form
+from database.operations import create_user
+from database.models import User
+
 router = APIRouter(tags=["task"], prefix="/task")
+
+
+
+@router.post("/users/", response_model=User)
+def create_new_user(user: User):
+    return create_user(user)
 
 
 @router.get("/get_tasks")

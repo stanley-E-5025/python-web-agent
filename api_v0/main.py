@@ -3,7 +3,9 @@ import uvicorn
 from config import get_settings
 from routes.router import central_router
 from fastapi.middleware.cors import CORSMiddleware
+from database.settings import create_tables
 
+create_tables()
 app = FastAPI()
 app.include_router(central_router, prefix="/v0")
 
