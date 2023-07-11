@@ -30,3 +30,5 @@ selenium_stealth
 bs4
 chardet
 faker
+SQLAlchemy==1.4.22
+sqlite3==0.0.1
