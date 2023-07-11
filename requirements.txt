@@ -25,6 +25,3 @@ black==22.10.0
 isort==5.10.1
 pytest==7.2.1
 greenlet
-
-sqlalchemy==1.4.22
-sqlite3==0.0.1

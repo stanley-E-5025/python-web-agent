@@ -19,6 +19,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+async def root():
+    return {"message": "Web-scraping API"}
+
+
 
 if __name__ == "__main__":
     uvicorn.run(
