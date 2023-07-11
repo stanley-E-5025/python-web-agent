@@ -129,7 +129,7 @@ class ScraperClient:
                 if i == 4:
                     self.bot_detected = True
 
-    def extract_blob(self) -> dict:
+    async def extract_blob(self) -> dict:
         driver_factory = WebDriverFactory(self.user_agent, self.download_dir)
         driver = driver_factory.get_driver()
         driver.get(self.url)

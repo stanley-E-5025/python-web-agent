@@ -36,3 +36,8 @@ def delete_task(id: int):
         session.delete(task)
         session.commit()
         return task
+    
+def read_all_tasks():
+    with Session(engine) as session:
+        tasks = session.query(Task).all()
+        return tasks
