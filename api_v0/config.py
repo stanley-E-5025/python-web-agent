@@ -233,3 +233,7 @@ POC_STEPS =   {
     ],
 }
     
+if __name__ == "__main__":
+    import json
+    with open('result.json', 'w') as fp:
+        json.dump(POC_STEPS, fp)

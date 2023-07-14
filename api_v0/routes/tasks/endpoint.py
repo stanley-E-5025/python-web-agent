@@ -7,6 +7,8 @@ import json
 from uuid import UUID, uuid4
 from config import POC_STEPS
 import io
+from fastapi.responses import StreamingResponse
+
 
 
 import os
@@ -42,16 +44,26 @@ def get_task(id:UUID):
     if task is None:
         raise HTTPException(status_code=404, detail="Task not found")
 
-    #if task.file:
-    #    csv_base64_bytes = task.file.encode()
-    #    csv_data_bytes = base64.b64decode(csv_base64_bytes)
-    #    csv_data_str = csv_data_bytes.decode()
-    #    data = io.StringIO(csv_data_str)
-    #    df = pd.read_csv(data)
-    
-    #   print(df)  # or return, or process as needed
-
     return task
+
+
+@router.get("/download/{id}")
+def download_task(id:UUID):
+    task = read_task(id)
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    if task.file:
+        csv_base64_bytes = task.file.encode()
+        csv_data_bytes = base64.b64decode(csv_base64_bytes)
+        csv_data_str = csv_data_bytes.decode()
+
+        response = StreamingResponse(io.StringIO(csv_data_str),
+                                      media_type="text/csv")
+        response.headers["Content-Disposition"] = "attachment; filename=export.csv"
+        return response
+
+    return HTTPException(status_code=404, detail="File not found")
 
 
 @router.get("/", response_model=list[Task])
