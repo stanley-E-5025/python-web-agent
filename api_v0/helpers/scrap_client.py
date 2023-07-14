@@ -62,11 +62,11 @@ class WebDriverFactory:
 
     def _get_executable_path(self):
         if platform.system() == "Windows":
-            return f"{root_dir}/chromedriver_win32/chromedriver.exe"
+            return f"{root_dir}/web_drivers/chromedriver_win32/chromedriver.exe"
         elif platform.system() == "Darwin":
-            return f"{root_dir}/chromedriver_mac64/chromedriver"
+            return f"{root_dir}/web_drivers/chromedriver_mac64/chromedriver"
         else:
-            return f"{root_dir}/chromedriver_linux64/chromedriver"
+            return f"{root_dir}/web_drivers/chromedriver_linux64/chromedriver"
 
 
 class ScraperClient:
