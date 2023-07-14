@@ -136,6 +136,8 @@ class ScraperClient:
         driver.set_window_size(
             self.steps["steps"][0]["width"], self.steps["steps"][0]["height"]
         )
+
+        logger.info(self.steps)
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
         )

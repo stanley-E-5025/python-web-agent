@@ -1,11 +1,12 @@
 from datetime import datetime
 from enum import Enum
 from typing import Optional
-from uuid import UUID
-
-from sqlalchemy import Column, func, DateTime
+from uuid import UUID,uuid4
 from sqlmodel import Field, Relationship, SQLModel, JSON
 from sqlmodel.sql.sqltypes import GUID
+from pydantic import BaseModel
+from sqlalchemy import Column, DateTime, func
+
 
 class TaskStatus(Enum):
     todo = "todo"
@@ -17,6 +18,8 @@ class TaskType(Enum):
     steps = "steps"
 
 class Task(SQLModel, table=True):
+    __tablename__ = "tasks"
+
     id: UUID = Field(
         sa_column=Column(
             "id",
@@ -24,22 +27,6 @@ class Task(SQLModel, table=True):
             server_default=func.gen_random_uuid(),
             unique=True,
             primary_key=True,
-        )
-    )
-    created_at: datetime = Field(
-        sa_column=Column(
-            "created_at",
-            DateTime(timezone=True),
-            server_default=func.current_timestamp(),
-            nullable=False,
-        )
-    )
-    updated_at: datetime = Field(
-        sa_column=Column(
-            "updated_at",
-            DateTime(timezone=True),
-            server_default=func.current_timestamp(),
-            nullable=False,
         )
     )
 
@@ -50,3 +37,15 @@ class Task(SQLModel, table=True):
     type: TaskType = Field(default=TaskType.blob)
     file: Optional[str] = Field(nullable=True)
     steps: Optional[str] = Field(default=None)
+
+
+    class Read(BaseModel):
+            id: UUID
+            url: Optional[str] 
+            title: str
+            description: Optional[str]
+            status: TaskStatus
+            type: TaskType
+            file: Optional[str]
+            steps: Optional[str]
+

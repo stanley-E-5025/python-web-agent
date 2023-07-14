@@ -1,10 +1,10 @@
-from fastapi import APIRouter, HTTPException
-from database.operations import create_task, read_task, update_task, delete_task, read_all_tasks
-from database.models import Task
+from fastapi import APIRouter, HTTPException, Form
+from .controller import create_task, read_task, update_task, delete_task, read_all_tasks
+from database.models import Task, TaskStatus, TaskType
 from helpers.scrap_client import ScraperClient
 from utils.scraping import delete_directory, detect_encoding
 import json
-from uuid import UUID
+from uuid import UUID, uuid4
 from config import POC_STEPS
 import io
 
@@ -12,13 +12,28 @@ import io
 import os
 import pandas as pd
 import base64
+from typing import Optional
+
+
 
 
 router = APIRouter(tags=["task"], prefix="/task")
 
-@router.post("/", response_model=Task)
-def create_new_task(task: Task):
-    return create_task(task)
+
+
+
+@router.post("/", response_model=Task.Read)
+async def create_new_task(
+    url: Optional[str] = Form(...),
+    title: str = Form(...), 
+    description: Optional[str] = Form(...),
+    status: TaskStatus = Form(...),
+    type: TaskType = Form(...),
+    file: Optional[str] = Form(...),
+    steps: Optional[str] = Form(...)
+):
+
+    return await create_task(id= str(uuid4()), url=url, title=title, description=description, status=status, type=type, file=file, steps=steps)
 
 
 @router.get("/{id}", response_model=Task)
@@ -27,14 +42,14 @@ def get_task(id:UUID):
     if task is None:
         raise HTTPException(status_code=404, detail="Task not found")
 
-    if task.file:
-        csv_base64_bytes = task.file.encode()
-        csv_data_bytes = base64.b64decode(csv_base64_bytes)
-        csv_data_str = csv_data_bytes.decode()
-        data = io.StringIO(csv_data_str)
-        df = pd.read_csv(data)
-
-        print(df)  # or return, or process as needed
+    #if task.file:
+    #    csv_base64_bytes = task.file.encode()
+    #    csv_data_bytes = base64.b64decode(csv_base64_bytes)
+    #    csv_data_str = csv_data_bytes.decode()
+    #    data = io.StringIO(csv_data_str)
+    #    df = pd.read_csv(data)
+    
+    #   print(df)  # or return, or process as needed
 
     return task
 
@@ -65,8 +80,9 @@ async def execute_task(id:UUID):
 
     url = task.url
     type = task.type
+    steps = json.loads(task.steps) 
 
-    scraper = ScraperClient(url, POC_STEPS, type, task.id)
+    scraper = ScraperClient(url, steps, type, task.id)
     results = await scraper.extract_blob()
 
     
