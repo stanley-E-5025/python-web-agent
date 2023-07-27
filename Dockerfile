@@ -13,6 +13,7 @@ RUN python3 -m pip install -r requirements.txt
 
 # Copy code
 COPY api_v0/ code/
+COPY web_drivers/ web_drivers/
 
 EXPOSE 5000
 
