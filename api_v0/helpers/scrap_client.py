@@ -45,9 +45,8 @@ class WebDriverFactory:
             "prefs", {"download.default_directory": self.download_dir}
         )
 
-        executable_path = self._get_executable_path()
-        service = Service(executable_path=executable_path)
-
+        service = Service()
+        
         driver = webdriver.Chrome(service=service, options=chrome_options)
         stealth(
             driver,
@@ -59,14 +58,6 @@ class WebDriverFactory:
             fix_hairline=True,
         )
         return driver
-
-    def _get_executable_path(self):
-        if platform.system() == "Windows":
-            return f"{root_dir}/web_drivers/chromedriver_win32/chromedriver.exe"
-        elif platform.system() == "Darwin":
-            return f"{root_dir}/web_drivers/chromedriver_mac64/chromedriver"
-        else:
-            return f"{root_dir}/web_drivers/chromedriver_linux64/chromedriver"
 
 
 class ScraperClient:
