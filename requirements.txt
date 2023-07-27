@@ -31,3 +31,4 @@ bs4
 chardet
 faker
 pandas
+webdriver_manager

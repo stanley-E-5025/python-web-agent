@@ -17,7 +17,7 @@ from selenium.webdriver.chrome.service import Service
 from datetime import datetime
 from selenium_stealth import stealth
 from selenium.webdriver.common.keys import Keys
-
+from webdriver_manager.chrome import ChromeDriverManager
 from utils.scraping import generate_user_agent
 
 tenant_directory, root_dir = (
@@ -40,14 +40,14 @@ class WebDriverFactory:
     def get_driver(self):
         chrome_options = Options()
         chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument(f"user-agent={self.user_agent}")
+        chrome_options.add_argument('--disable-dev-shm-usage')
         chrome_options.add_experimental_option(
             "prefs", {"download.default_directory": self.download_dir}
         )
 
-        service = Service()
-        
-        driver = webdriver.Chrome(service=service, options=chrome_options)
+        driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
         stealth(
             driver,
             languages=["en-US", "en"],
