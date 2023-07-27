@@ -17,7 +17,6 @@ from selenium.webdriver.chrome.service import Service
 from datetime import datetime
 from selenium_stealth import stealth
 from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
 from utils.scraping import generate_user_agent
 
 tenant_directory, root_dir = (
@@ -47,7 +46,7 @@ class WebDriverFactory:
             "prefs", {"download.default_directory": self.download_dir}
         )
 
-        driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+        driver = webdriver.Chrome(options=chrome_options)
         stealth(
             driver,
             languages=["en-US", "en"],
