@@ -5,7 +5,15 @@ import os
 import random
 from pathlib import Path
 import platform
+import asyncio
 from bs4 import BeautifulSoup
+tenant_directory, root_dir = (
+    Path(__file__).resolve().parent.parent,
+    Path(__file__).resolve().parent.parent.parent,
+)
+
+sys.path.insert(0, str(root_dir))
+sys.path.append(str(tenant_directory))
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -19,13 +27,7 @@ from selenium_stealth import stealth
 from selenium.webdriver.common.keys import Keys
 from utils.scraping import generate_user_agent
 
-tenant_directory, root_dir = (
-    Path(__file__).resolve().parent.parent,
-    Path(__file__).resolve().parent.parent.parent,
-)
 
-sys.path.insert(0, str(root_dir))
-sys.path.append(str(tenant_directory))
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -38,8 +40,8 @@ class WebDriverFactory:
 
     def get_driver(self):
         chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--no-sandbox")
+        # chrome_options.add_argument("--headless")
+        # chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument(f"user-agent={self.user_agent}")
         chrome_options.add_argument('--disable-dev-shm-usage')
         chrome_options.add_experimental_option(
@@ -75,11 +77,18 @@ class ScraperClient:
         os.makedirs(download_dir, exist_ok=True)
         return download_dir
 
-    def handle_key_event(self, driver, key: str, action: str):
-        if action == "keyDown":
-            ActionChains(driver).key_down(getattr(Keys, key.upper())).perform()
-        elif action == "keyUp":
-            ActionChains(driver).key_up(getattr(Keys, key.upper())).perform()
+    def handle_key_event(self, driver, key, type):
+        try:
+            key_attr = getattr(Keys, key.upper())
+        except AttributeError:
+            print(f'Invalid key: {key}')
+            return
+
+        if type == 'keyDown':
+            ActionChains(driver).key_down(key_attr).perform()
+        elif type == 'keyUp':
+            ActionChains(driver).key_up(key_attr).perform()
+
 
     def wait_for_element(self, driver, selector, by, retries=3):
         attempt = 0
@@ -161,7 +170,7 @@ class ScraperClient:
                             element = self.wait_for_element(driver, selector, by=by)
                             if element:
                                 element.clear()
-                                element.send_keys(self.data)
+                                element.send_keys(step["value"])
             elif step["type"] in ["keyDown", "keyUp"]:
                 self.handle_key_event(driver, step["key"], step["type"])
             time.sleep(3)
