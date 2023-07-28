@@ -6,6 +6,7 @@ from database.models import Task, TaskStatus, TaskType
 from typing import Optional
 from sqlalchemy import VARCHAR, and_, cast, delete, insert, or_, select, update
 
+from helpers.scrap_client import ScraperClient
 
 
 async def create_task(
@@ -57,3 +58,9 @@ def read_all_tasks():
     with Session(engine) as session:
         tasks = session.query(Task).all()
         return tasks
+    
+
+async def run_bot(url, steps, case, data):
+    scraper = ScraperClient(url, steps, case, data)
+    results = await scraper.extract_blob()
+    return results

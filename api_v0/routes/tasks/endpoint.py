@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Form
-from .controller import create_task, read_task, update_task, delete_task, read_all_tasks
+from .controller import create_task, read_task, update_task, delete_task, read_all_tasks, run_bot
 from database.models import Task, TaskStatus, TaskType
 from helpers.scrap_client import ScraperClient
 from utils.scraping import delete_directory, detect_encoding
@@ -9,12 +9,13 @@ from config import POC_STEPS
 import io
 from fastapi.responses import StreamingResponse
 
-
+import logging
 
 import os
 import pandas as pd
 import base64
 from typing import Optional
+import asyncio
 
 
 
@@ -22,7 +23,7 @@ from typing import Optional
 router = APIRouter(tags=["task"], prefix="/task")
 
 
-
+logger = logging.getLogger(__name__)
 
 @router.post("/", response_model=Task.Read)
 async def create_new_task(
@@ -94,10 +95,7 @@ async def execute_task(id:UUID):
     type = task.type
     steps = json.loads(task.steps) 
 
-    scraper = ScraperClient(url, steps, type, task.id)
-    results = await scraper.extract_blob()
-
-    
+    results = asyncio.run(run_bot(url=url, steps=steps, case=type, data=""))
     download_dir = results
 
     csv_file = [f for f in os.listdir(download_dir) if f.endswith('.csv')]
