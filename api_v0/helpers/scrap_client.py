@@ -4,8 +4,6 @@ import time
 import os
 import random
 from pathlib import Path
-import platform
-import asyncio
 from bs4 import BeautifulSoup
 tenant_directory, root_dir = (
     Path(__file__).resolve().parent.parent,
@@ -21,7 +19,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.chrome.service import Service
 from datetime import datetime
 from selenium_stealth import stealth
 from selenium.webdriver.common.keys import Keys
@@ -62,8 +59,7 @@ class WebDriverFactory:
 
 
 class ScraperClient:
-    def __init__(self, url: str, steps: list, case: str, data: str):
-        self.url = url
+    def __init__(self, steps: list, case: str, data: str):
         self.steps = steps
         self.case = case
         self.data = data
@@ -131,7 +127,7 @@ class ScraperClient:
     async def extract_blob(self) -> dict:
         driver_factory = WebDriverFactory(self.user_agent, self.download_dir)
         driver = driver_factory.get_driver()
-        driver.get(self.url)
+        driver.get(self.steps[1]["url"])
         driver.set_window_size(
             self.steps["steps"][0]["width"], self.steps["steps"][0]["height"]
         )

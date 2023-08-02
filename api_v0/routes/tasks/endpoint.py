@@ -90,12 +90,11 @@ async def execute_task(id:UUID):
     task = read_task(id)
     if task is None:
         raise HTTPException(status_code=404, detail="Task not found")
-
-    url = task.url
+    
     type = task.type
     steps = json.loads(task.steps) 
 
-    results = await run_bot(url=url, steps=steps, case=type, data="")
+    results = await run_bot(steps=steps, case=type, data="")
     download_dir = results
 
     csv_file = [f for f in os.listdir(download_dir) if f.endswith('.csv')]
