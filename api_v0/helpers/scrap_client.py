@@ -127,7 +127,7 @@ class ScraperClient:
     async def extract_blob(self) -> dict:
         driver_factory = WebDriverFactory(self.user_agent, self.download_dir)
         driver = driver_factory.get_driver()
-        driver.get(self.steps[1]["url"])
+        driver.get(self.steps["steps"][1]["url"])
         driver.set_window_size(
             self.steps["steps"][0]["width"], self.steps["steps"][0]["height"]
         )
