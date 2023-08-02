@@ -60,7 +60,7 @@ def read_all_tasks():
         return tasks
     
 
-async def run_bot(url, steps, case, data):
-    scraper = ScraperClient(url, steps, case, data)
+async def run_bot(steps, case, data):
+    scraper = ScraperClient(steps, case, data)
     results = await scraper.extract_blob()
     return results
